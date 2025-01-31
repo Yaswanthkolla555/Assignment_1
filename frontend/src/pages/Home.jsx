@@ -8,10 +8,11 @@ const Home = () => {
   const [errors, setErrors] = useState([]);
 
   const handleUploadSuccess = (response) => {
+    console.log(response.preview);  
     if (response.errors) {
       setErrors(response.errors);
     } else {
-      setData(response.validData);
+      setData(response.preview);
     }
   };
 

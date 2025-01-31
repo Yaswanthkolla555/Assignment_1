@@ -16,7 +16,7 @@ const UploadFile = ({ onUploadSuccess }) => {
 
       try {
         const response = await uploadFile(acceptedFiles[0]);
-        onUploadSuccess(response.data);
+        onUploadSuccess(response);
       } catch (err) {
         setError("Failed to upload file.");
       }
