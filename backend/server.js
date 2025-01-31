@@ -19,7 +19,7 @@ app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS) to allow request
 app.use(express.json()); // Parse incoming JSON requests and place the result in req.body
 
 // Set up the routes
-app.use("/api/upload", fileUploadRoutes); // Define route to handle file uploads
+app.use("/api", fileUploadRoutes); // Define route to handle file uploads
 
 // Error handling middleware for unexpected errors
 app.use((err, req, res, next) => {
