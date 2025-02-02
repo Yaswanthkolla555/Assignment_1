@@ -1,24 +1,77 @@
-import React from "react";
+import React, { useState } from "react";
 import Home from "./pages/Home";
+// import AboutMe from "./pages/AboutMe"; // Add an AboutMe component
+// import ContactMe from "./pages/ContactMe"; // Add a ContactMe component
 
 const App = () => {
+  // State for handling sidebar toggle
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activePage, setActivePage] = useState("Home"); // Track active page
+
+  // Function to toggle sidebar visibility
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setActivePage(page);
+    setSidebarOpen(false); // Close sidebar on page change
+  };
+
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="w-64 bg-blue-800 text-white p-6">
-        <h2 className="text-2xl font-semibold mb-6">Dashboard</h2>
+      <div
+        className={`${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } fixed inset-0 bg-blue-800 text-white p-6 md:w-64 transition-transform duration-500 ease-in-out z-50 md:static md:translate-x-0`}
+      >
+        <h2 className="text-2xl font-semibold mb-6 transition-all ease-in-out duration-300 hover:text-yellow-400">
+          Dashboard
+        </h2>
         <ul>
-          <li className="mb-4 hover:bg-blue-700 p-2 rounded cursor-pointer">Home</li>
-          <li className="mb-4 hover:bg-blue-700 p-2 rounded cursor-pointer">Upload</li>
-          <li className="mb-4 hover:bg-blue-700 p-2 rounded cursor-pointer">Reports</li>
-          <li className="mb-4 hover:bg-blue-700 p-2 rounded cursor-pointer">Settings</li>
+          <li
+            className="mb-4 p-2 rounded cursor-pointer hover:bg-blue-700 hover:scale-105 transition-all duration-300"
+            onClick={() => handlePageChange("Home")}
+          >
+            Home
+          </li>
+          <li
+            className="mb-4 p-2 rounded cursor-pointer hover:bg-blue-700 hover:scale-105 transition-all duration-300"
+            onClick={() => handlePageChange("AboutMe")}
+          >
+            About Me
+          </li>
+          <li
+            className="mb-4 p-2 rounded cursor-pointer hover:bg-blue-700 hover:scale-105 transition-all duration-300"
+            onClick={() => handlePageChange("ContactMe")}
+          >
+            Contact Me
+          </li>
         </ul>
       </div>
 
+      {/* Overlay when sidebar is open */}
+      <div
+        className={`${
+          sidebarOpen ? "block" : "hidden"
+        } fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden`}
+        onClick={toggleSidebar}
+      ></div>
+
       {/* Main Content */}
       <div className="flex-1 p-6">
-        <h1 className="text-3xl font-semibold mb-6">Welcome to the Dashboard</h1>
-        <Home />
+        {/* Button to toggle sidebar on smaller screens */}
+        <button
+          onClick={toggleSidebar}
+          className="md:hidden p-2 bg-blue-500 text-white rounded-lg mb-6 transition-all duration-300 ease-in-out hover:bg-blue-700"
+        >
+          Toggle Sidebar
+        </button>
+
+        {/* Render active page */}
+        {activePage === "Home" && <Home />}
+        {activePage === "AboutMe" && <AboutMe />}
+        {activePage === "ContactMe" && <ContactMe />}
       </div>
     </div>
   );
