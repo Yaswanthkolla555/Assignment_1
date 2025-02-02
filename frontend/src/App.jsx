@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Home from "./pages/Home";
-// import AboutMe from "./pages/AboutMe"; // Add an AboutMe component
-// import ContactMe from "./pages/ContactMe"; // Add a ContactMe component
+import AboutMe from "./pages/About"; // Add an AboutMe component
+import ContactMe from "./pages/ContactMe"; // Add a ContactMe component
+import AboutProject from "./pages/AboutProject"; // Import AboutProject component
 
 const App = () => {
   // State for handling sidebar toggle
@@ -29,24 +30,37 @@ const App = () => {
           Dashboard
         </h2>
         <ul>
+          {/* Home Link */}
           <li
             className="mb-4 p-2 rounded cursor-pointer hover:bg-blue-700 hover:scale-105 transition-all duration-300"
             onClick={() => handlePageChange("Home")}
           >
             Home
           </li>
+          {/* About Project Link */}
+          <li
+            className="mb-4 p-2 rounded cursor-pointer hover:bg-blue-700 hover:scale-105 transition-all duration-300"
+            onClick={() => handlePageChange("AboutProject")}
+          >
+            About Project
+          </li>
+
+          {/* About Me Link */}
           <li
             className="mb-4 p-2 rounded cursor-pointer hover:bg-blue-700 hover:scale-105 transition-all duration-300"
             onClick={() => handlePageChange("AboutMe")}
           >
             About Me
           </li>
+
+          {/* Contact Me Link */}
           <li
             className="mb-4 p-2 rounded cursor-pointer hover:bg-blue-700 hover:scale-105 transition-all duration-300"
             onClick={() => handlePageChange("ContactMe")}
           >
             Contact Me
           </li>
+
         </ul>
       </div>
 
@@ -72,6 +86,7 @@ const App = () => {
         {activePage === "Home" && <Home />}
         {activePage === "AboutMe" && <AboutMe />}
         {activePage === "ContactMe" && <ContactMe />}
+        {activePage === "AboutProject" && <AboutProject />} {/* AboutProject Page */}
       </div>
     </div>
   );

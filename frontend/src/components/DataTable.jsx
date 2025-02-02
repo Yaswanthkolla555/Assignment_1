@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ErrorModal from "../components/ErrorModal";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import Toastify styles
 
 const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
   const [tableData, setTableData] = useState([]);
@@ -25,7 +27,13 @@ const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
 
   const handleDelete = (index) => {
     if (window.confirm("Are you sure you want to delete this row?")) {
-      setTableData((prev) => prev.filter((_, i) => i !== index));
+      setTableData((prev) => {
+        const updatedData = prev.filter((_, i) => i !== index);
+        if (updatedData.length === prev.length - 1) {
+          toast.success("Row deleted successfully!"); // Success Toast for delete
+        }
+        return updatedData;
+      });
     }
   };
 
@@ -41,9 +49,15 @@ const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
       if (response.data.skippedRows) {
         setSkippedRows(response.data.skippedRows);
       }
+
+      // Show success message using Toastify
+      toast.success("Data successfully imported into the database!");
     } catch (error) {
       console.error("Import Error:", error);
       setErrors([...(error.response?.data?.errors || ["An unknown error occurred"])]); // Show errors if any
+
+      // Show error message using Toastify
+      toast.error("Import failed. Please try again!");
     }
   };
 
@@ -142,8 +156,10 @@ const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
       {/* Display ErrorModal if skippedRows exist */}
       {skippedRows.length > 0 && (
         <ErrorModal skippedRows={skippedRows} onClose={() => setSkippedRows([])} />
-        // <h1>Eroorr</h1>
       )}
+
+      {/* ToastContainer to show toast messages */}
+      <ToastContainer />
     </div>
   );
 };
