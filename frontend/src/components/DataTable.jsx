@@ -1,43 +1,56 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios"; // Ensure axios is imported
 
 const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
   const [tableData, setTableData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [status, setStatus] = useState(""); // ✅ Add this
+  const [skippedRows, setSkippedRows] = useState([]); // ✅ Add this
   const rowsPerPage = 5;
 
   useEffect(() => {
     if (Array.isArray(data)) {
       setTableData(data);
     }
+    console.log(data);
   }, [data]);
 
-  // Format date to DD-MM-YYYY
   const formatDate = (date) => {
     return date ? new Date(date).toLocaleDateString("en-GB") : "Invalid Date";
   };
 
-  // Format number in Indian system
   const formatNumber = (num) => {
     return num ? Number(num).toLocaleString("en-IN", { minimumFractionDigits: 2 }) : "N/A";
   };
 
-  // Handle row deletion
   const handleDelete = (index) => {
     if (window.confirm("Are you sure you want to delete this row?")) {
       setTableData((prev) => prev.filter((_, i) => i !== index));
     }
   };
 
-  // Pagination logic
+
+  const handleImport = async () => {
+    console.log(data);
+    
+    try {
+      const response = await axios.post("http://localhost:5000/api/import-data", data, {
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log("Import Success:", response.data);
+    } catch (error) {
+      console.error("Import Error:", error);
+    }
+  };
+
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
 
   return (
-    <div className="overflow-x-auto">
-      {/* Sheet Selection Dropdown */}
+    <div className="p-4 bg-white shadow-lg rounded-lg overflow-x-auto">
       {sheetNames.length > 0 && (
-        <div className="mb-4">
+        <div className="mb-4 flex items-center">
           <label className="font-semibold mr-2">Select Sheet:</label>
           <select
             onChange={(e) => onSheetChange(e.target.value)}
@@ -50,10 +63,23 @@ const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
         </div>
       )}
 
-      {/* Table */}
-      <table className="min-w-full border-collapse border border-gray-300 shadow-lg">
+      <button
+        onClick={handleImport}
+        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer"
+      >
+        📥 Import Data
+      </button>
+
+      {status && <p className="mb-2 text-blue-600">{status}</p>} {/* ✅ Show import status */}
+      {skippedRows.length > 0 && (
+        <div className="mb-2 text-red-600">
+          <p>Skipped Rows: {skippedRows.join(", ")}</p>
+        </div>
+      )}
+
+      <table className="min-w-full border-collapse border border-gray-300 shadow-md rounded-lg">
         <thead>
-          <tr className="bg-gray-200">
+          <tr className="bg-blue-500 text-white">
             {["Name", "Amount", "Date", "Verified", "Actions"].map((col) => (
               <th key={col} className="border p-3 text-left">{col}</th>
             ))}
@@ -66,13 +92,13 @@ const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
                 <td className="p-3">{row.Name || "N/A"}</td>
                 <td className="p-3">{formatNumber(row.Amount)}</td>
                 <td className="p-3">{formatDate(row.Date)}</td>
-                <td className="p-3">{row.Verified ? "Yes" : "No"}</td>
+                <td className="p-3">{row.Verified ? "✅ Yes" : "❌ No"}</td>
                 <td className="p-3">
                   <button
                     onClick={() => handleDelete(index)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-500 hover:text-red-700 cursor-pointer"
                   >
-                    ❌
+                    ❌ Delete
                   </button>
                 </td>
               </tr>
@@ -87,22 +113,21 @@ const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
         </tbody>
       </table>
 
-      {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="p-2 border rounded disabled:opacity-50"
+          className="p-2 border rounded disabled:opacity-50 bg-gray-200 hover:bg-gray-300 cursor-pointer"
         >
-          Previous
+          ⬅ Previous
         </button>
         <span>Page {currentPage}</span>
         <button
           onClick={() => setCurrentPage((prev) => (indexOfLastRow < tableData.length ? prev + 1 : prev))}
           disabled={indexOfLastRow >= tableData.length}
-          className="p-2 border rounded disabled:opacity-50"
+          className="p-2 border rounded disabled:opacity-50 bg-gray-200 hover:bg-gray-300 cursor-pointer"
         >
-          Next
+          Next ➡
         </button>
       </div>
     </div>

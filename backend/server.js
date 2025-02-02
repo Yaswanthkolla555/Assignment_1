@@ -4,7 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./src/config/db.js"; // Import the database connection function
 import fileUploadRoutes from "./src/routes/fileUploadRoutes.js"; // Import file upload routes
-
+import importRoute from "./src/routes/dataImportRoutes.js"
 // Load environment variables from .env file
 dotenv.config();
 
@@ -20,6 +20,7 @@ app.use(express.json()); // Parse incoming JSON requests and place the result in
 
 // Set up the routes
 app.use("/api", fileUploadRoutes); // Define route to handle file uploads
+app.use('/api', importRoute);
 
 // Error handling middleware for unexpected errors
 app.use((err, req, res, next) => {
