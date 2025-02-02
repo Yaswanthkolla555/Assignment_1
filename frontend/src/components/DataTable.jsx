@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; // Ensure axios is imported
+import axios from "axios";
+import ErrorModal from "../components/ErrorModal";
 
 const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
   const [tableData, setTableData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [status, setStatus] = useState(""); // ✅ Add this
-  const [skippedRows, setSkippedRows] = useState([]); // ✅ Add this
+  const [errors, setErrors] = useState([]);
+  const [skippedRows, setSkippedRows] = useState([]); // For skipped rows
   const rowsPerPage = 5;
 
   useEffect(() => {
     if (Array.isArray(data)) {
       setTableData(data);
     }
-    console.log(data);
   }, [data]);
 
   const formatDate = (date) => {
@@ -29,17 +29,21 @@ const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
     }
   };
 
-
   const handleImport = async () => {
-    console.log(data);
-    
     try {
-      const response = await axios.post("http://localhost:5000/api/import-data", data, {
+      const response = await axios.post("http://localhost:5000/api/import-data", tableData, {
         headers: { "Content-Type": "application/json" },
       });
       console.log("Import Success:", response.data);
+      setErrors([]); // Reset errors
+
+      // Set skipped rows after successful import
+      if (response.data.skippedRows) {
+        setSkippedRows(response.data.skippedRows);
+      }
     } catch (error) {
       console.error("Import Error:", error);
+      setErrors([...(error.response?.data?.errors || ["An unknown error occurred"])]); // Show errors if any
     }
   };
 
@@ -65,17 +69,10 @@ const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
 
       <button
         onClick={handleImport}
-        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer"
+        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer"
       >
         📥 Import Data
       </button>
-
-      {status && <p className="mb-2 text-blue-600">{status}</p>} {/* ✅ Show import status */}
-      {skippedRows.length > 0 && (
-        <div className="mb-2 text-red-600">
-          <p>Skipped Rows: {skippedRows.join(", ")}</p>
-        </div>
-      )}
 
       <table className="min-w-full border-collapse border border-gray-300 shadow-md rounded-lg">
         <thead>
@@ -130,6 +127,23 @@ const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
           Next ➡
         </button>
       </div>
+
+      {errors.length > 0 && (
+        <div className="mt-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          <h2 className="font-semibold">Import Errors</h2>
+          <ul className="list-disc list-inside">
+            {errors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Display ErrorModal if skippedRows exist */}
+      {skippedRows.length > 0 && (
+        <ErrorModal skippedRows={skippedRows} onClose={() => setSkippedRows([])} />
+        // <h1>Eroorr</h1>
+      )}
     </div>
   );
 };
