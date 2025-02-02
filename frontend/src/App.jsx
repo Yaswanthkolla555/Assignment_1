@@ -1,26 +1,21 @@
 import React, { useState } from "react";
 import Home from "./pages/Home";
-import AboutMe from "./pages/About"; // Add an AboutMe component
-import ContactMe from "./pages/ContactMe"; // Add a ContactMe component
-import AboutProject from "./pages/AboutProject"; // Import AboutProject component
-
+import AboutMe from "./pages/About"; 
+import ContactMe from "./pages/ContactMe"; 
+import AboutProject from "./pages/AboutProject"; 
 const App = () => {
-  // State for handling sidebar toggle
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activePage, setActivePage] = useState("Home"); // Track active page
+  const [activePage, setActivePage] = useState("Home"); 
 
-  // Function to toggle sidebar visibility
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  // Handle page change
   const handlePageChange = (page) => {
     setActivePage(page);
-    setSidebarOpen(false); // Close sidebar on page change
+    setSidebarOpen(false); 
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
       <div
         className={`${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -30,14 +25,12 @@ const App = () => {
           Dashboard
         </h2>
         <ul>
-          {/* Home Link */}
           <li
             className="mb-4 p-2 rounded cursor-pointer hover:bg-blue-700 hover:scale-105 transition-all duration-300"
             onClick={() => handlePageChange("Home")}
           >
             Home
           </li>
-          {/* About Project Link */}
           <li
             className="mb-4 p-2 rounded cursor-pointer hover:bg-blue-700 hover:scale-105 transition-all duration-300"
             onClick={() => handlePageChange("AboutProject")}
@@ -45,7 +38,6 @@ const App = () => {
             About Project
           </li>
 
-          {/* About Me Link */}
           <li
             className="mb-4 p-2 rounded cursor-pointer hover:bg-blue-700 hover:scale-105 transition-all duration-300"
             onClick={() => handlePageChange("AboutMe")}
@@ -53,7 +45,6 @@ const App = () => {
             About Me
           </li>
 
-          {/* Contact Me Link */}
           <li
             className="mb-4 p-2 rounded cursor-pointer hover:bg-blue-700 hover:scale-105 transition-all duration-300"
             onClick={() => handlePageChange("ContactMe")}
@@ -64,7 +55,6 @@ const App = () => {
         </ul>
       </div>
 
-      {/* Overlay when sidebar is open */}
       <div
         className={`${
           sidebarOpen ? "block" : "hidden"
@@ -72,9 +62,8 @@ const App = () => {
         onClick={toggleSidebar}
       ></div>
 
-      {/* Main Content */}
       <div className="flex-1 p-6">
-        {/* Button to toggle sidebar on smaller screens */}
+
         <button
           onClick={toggleSidebar}
           className="md:hidden p-2 bg-blue-500 text-white rounded-lg mb-6 transition-all duration-300 ease-in-out hover:bg-blue-700"
@@ -82,11 +71,10 @@ const App = () => {
           Toggle Sidebar
         </button>
 
-        {/* Render active page */}
         {activePage === "Home" && <Home />}
         {activePage === "AboutMe" && <AboutMe />}
         {activePage === "ContactMe" && <ContactMe />}
-        {activePage === "AboutProject" && <AboutProject />} {/* AboutProject Page */}
+        {activePage === "AboutProject" && <AboutProject />} 
       </div>
     </div>
   );

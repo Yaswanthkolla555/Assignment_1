@@ -2,10 +2,8 @@ import mongoose from 'mongoose';
 import moment from 'moment';
 import MyModel from '../models/ImportedData.js';
 
-// To store skipped rows globally
 let skippedRows = []; 
 
-// Function to validate data
 const validateRow = (row, rowIndex, sheetName) => {
   const errors = [];
 
@@ -21,14 +19,13 @@ const validateRow = (row, rowIndex, sheetName) => {
     errors.push("Amount must be a positive number.");
   }
 
-  // Check if Date is an Excel serial number and convert it to a valid date
+  
   let date = row.Date;
   if (typeof date === "number" && !isNaN(date)) {
-    // If it's a number, convert it to a date
+
     date = moment().startOf('year').add(date - 2, 'days').format("DD-MM-YYYY");
   }
 
-  // Validate date format as DD-MM-YYYY
   if (!date || !moment(date, "DD-MM-YYYY", true).isValid()) {
     errors.push("Date must be in valid format (DD-MM-YYYY).");
   }
@@ -40,9 +37,9 @@ const validateRow = (row, rowIndex, sheetName) => {
   return errors.length ? { sheet: sheetName, row: rowIndex, errors } : null;
 };
 
-// Function to import data
+
 const importData = async (data) => {
-  console.log("Received data:", data); // Debug log
+  console.log("Received data:", data); 
 
   if (!Array.isArray(data)) {
     console.error("Error: Expected an array but got", typeof data);
@@ -50,7 +47,7 @@ const importData = async (data) => {
   }
 
   const validRows = [];
-  skippedRows = []; // Clear skippedRows at the start of each import
+  skippedRows = []; 
 
   for (const row of data) {
     const errors = validateRow(row);
@@ -71,7 +68,7 @@ const importData = async (data) => {
   return { success: true, validRows, skippedRows };
 };
 
-// Function to get skipped rows
+
 const getSkippedRows = async (req, res) => {
   try {
     res.status(200).json({

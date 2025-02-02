@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ErrorModal from "../components/ErrorModal";
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Import Toastify styles
+import 'react-toastify/dist/ReactToastify.css'; 
 
 const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
   const [tableData, setTableData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [errors, setErrors] = useState([]);
-  const [skippedRows, setSkippedRows] = useState([]); // For skipped rows
+  const [skippedRows, setSkippedRows] = useState([]);
   const rowsPerPage = 5;
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
       setTableData((prev) => {
         const updatedData = prev.filter((_, i) => i !== index);
         if (updatedData.length === prev.length - 1) {
-          toast.success("Row deleted successfully!"); // Success Toast for delete
+          toast.success("Row deleted successfully!"); 
         }
         return updatedData;
       });
@@ -45,18 +45,16 @@ const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
       console.log("Import Success:", response.data);
       setErrors([]); // Reset errors
 
-      // Set skipped rows after successful import
       if (response.data.skippedRows) {
         setSkippedRows(response.data.skippedRows);
       }
 
-      // Show success message using Toastify
+      
       toast.success("Data successfully imported into the database!");
     } catch (error) {
       console.error("Import Error:", error);
       setErrors([...(error.response?.data?.errors || ["An unknown error occurred"])]); // Show errors if any
 
-      // Show error message using Toastify
       toast.error("Import failed. Please try again!");
     }
   };
@@ -153,12 +151,10 @@ const DataTable = ({ data = [], sheetNames = [], onSheetChange }) => {
         </div>
       )}
 
-      {/* Display ErrorModal if skippedRows exist */}
+    
       {skippedRows.length > 0 && (
         <ErrorModal skippedRows={skippedRows} onClose={() => setSkippedRows([])} />
       )}
-
-      {/* ToastContainer to show toast messages */}
       <ToastContainer />
     </div>
   );

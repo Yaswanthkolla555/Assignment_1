@@ -2,24 +2,23 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import connectDB from "./src/config/db.js"; // Import the database connection function
-import fileUploadRoutes from "./src/routes/fileUploadRoutes.js"; // Import file upload routes
+import connectDB from "./src/config/db.js"; 
+import fileUploadRoutes from "./src/routes/fileUploadRoutes.js"; 
 import importRoute from "./src/routes/dataImportRoutes.js"
-// Load environment variables from .env file
+
 dotenv.config();
 
-// Establish connection to MongoDB database
+
 connectDB();
 
-// Create an instance of Express app
+
 const app = express();
 
-// Middleware setup
-app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS) to allow requests from different origins
-app.use(express.json()); // Parse incoming JSON requests and place the result in req.body
 
-// Set up the routes
-app.use("/api", fileUploadRoutes); // Define route to handle file uploads
+app.use(cors()); 
+app.use(express.json()); 
+
+app.use("/api", fileUploadRoutes);
 app.use('/api', importRoute);
 // in this route we have 2 other connections one to post data and other to get data
 
@@ -32,10 +31,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Set the port from environment variable or default to 5000
+
 const PORT = process.env.PORT || 5000;
 
-// Start the server and listen on the specified port
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
